@@ -15,7 +15,6 @@
  */
 
 import com.android.build.gradle.api.BaseVariant
-import net.ltgt.gradle.errorprone.CheckSeverity
 
 plugins {
     id('com.android.application')
@@ -47,7 +46,7 @@ android {
     variants.configureEach { variant ->
         variant.getJavaCompileProvider().configure {
             options.errorprone {
-                check("NullAway", CheckSeverity.ERROR)
+                error("NullAway")
                 option("NullAway:AnnotatedPackages", "com.uber")
             }
         }
@@ -59,7 +58,7 @@ android {
 //    testVariants.configureEach { variant ->
 //        variant.getJavaCompileProvider().configure {
 //            options.errorprone {
-//                check("NullAway", CheckSeverity.OFF)
+//                disable("NullAway")
 //            }
 //        }
 //    }

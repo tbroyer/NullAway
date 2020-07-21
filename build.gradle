@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import net.ltgt.gradle.errorprone.CheckSeverity
 buildscript {
     repositories {
         google() // For Gradle 4.0+
@@ -26,7 +25,7 @@ buildscript {
 }
 plugins {
   id "com.github.sherter.google-java-format" version "0.8"
-  id "net.ltgt.errorprone" version "0.7" apply false
+  id "net.ltgt.errorprone" version "1.2.1" apply false
   id "com.github.johnrengelman.shadow" version "2.0.4" apply false
   id 'com.github.kt3k.coveralls' version '2.6.3' apply false
   id 'com.android.application' version '3.5.0' apply false
@@ -57,10 +56,10 @@ subprojects { project ->
             // disable warnings in generated code; AutoValue code fails UnnecessaryParentheses check
             disableWarningsInGeneratedCode = true
             // Triggers for generated Android code (R.java)
-            check("MutablePublicArray", CheckSeverity.OFF)
+            disable("MutablePublicArray")
             // this check is too noisy
-            check("StringSplitter", CheckSeverity.OFF)
-            check("WildcardImport", CheckSeverity.ERROR)
+            disable("StringSplitter")
+            error("WildcardImport")
         }
     }
 

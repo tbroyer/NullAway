@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import net.ltgt.gradle.errorprone.CheckSeverity
-
 plugins {
   id "java"
 }
@@ -34,7 +32,7 @@ dependencies {
 tasks.withType(JavaCompile) {
   if (!name.toLowerCase().contains("test")) {
     options.errorprone {
-      check("NullAway", CheckSeverity.ERROR)
+      error("NullAway")
       option("NullAway:AnnotatedPackages", "com.uber")
     }
   }
