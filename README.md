@@ -19,7 +19,7 @@ To integrate NullAway into your non-Android Java project, add the following to y
 ```gradle
 plugins {
   // we assume you are already using the Java plugin
-  id "net.ltgt.errorprone" version "0.6"
+  id "net.ltgt.errorprone" version "1.2.1"
 }
 
 dependencies {
@@ -34,13 +34,11 @@ dependencies {
   errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
 }
 
-import net.ltgt.gradle.errorprone.CheckSeverity
-
 tasks.withType(JavaCompile) {
   // remove the if condition if you want to run NullAway on test code
   if (!name.toLowerCase().contains("test")) {
     options.errorprone {
-      check("NullAway", CheckSeverity.ERROR)
+      error("NullAway")
       option("NullAway:AnnotatedPackages", "com.uber")
     }
   }
@@ -54,7 +52,7 @@ buildscript {
     gradlePluginPortal()
   }
   dependencies {
-    classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.6"
+    classpath "net.ltgt.gradle:gradle-errorprone-plugin:1.2.1"
   }
 }
 
@@ -63,7 +61,7 @@ apply plugin: 'net.ltgt.errorprone'
 
 In `dependencies`, the `annotationProcessor` line loads NullAway, and the `compileOnly` line loads a [JSR 305](https://jcp.org/en/jsr/detail?id=305) library which provides a suitable `@Nullable` annotation (`javax.annotation.Nullable`).  NullAway allows for any `@Nullable` annotation to be used, so, e.g., `@Nullable` from the Android Support Library or JetBrains annotations is also fine. The `errorprone` line ensures that a compatible version of Error Prone is used, and the `errorproneJavac` line is needed for JDK 8 compatibility.
 
-Finally, in the `tasks.withType(JavaCompile)` section, we pass some configuration options to NullAway.  First `check("NullAway", CheckSeverity.ERROR)` sets NullAway issues to the error level (it's equivalent to the `-Xep:NullAway:ERROR` standard Error Prone argument); by default NullAway emits warnings.  Then, `option("NullAway:AnnotatedPackages", "com.uber")` (equivalent to the `-XepOpt:NullAway:AnnotatedPackages=com.uber` standard Error Prone argument), tells NullAway that source code in packages under the `com.uber` namespace should be checked for null dereferences and proper usage of `@Nullable` annotations, and that class files in these packages should be assumed to have correct usage of `@Nullable` (see [the docs](https://github.com/uber/NullAway/wiki/Configuration) for more detail).  NullAway requires at least the `AnnotatedPackages` configuration argument to run, in order to distinguish between annotated and unannotated code.  See [the configuration docs](https://github.com/uber/NullAway/wiki/Configuration) for other useful configuration options.
+Finally, in the `tasks.withType(JavaCompile)` section, we pass some configuration options to NullAway.  First `error("NullAway")` sets NullAway issues to the error level (it's equivalent to the `-Xep:NullAway:ERROR` standard Error Prone argument); by default NullAway emits warnings.  Then, `option("NullAway:AnnotatedPackages", "com.uber")` (equivalent to the `-XepOpt:NullAway:AnnotatedPackages=com.uber` standard Error Prone argument), tells NullAway that source code in packages under the `com.uber` namespace should be checked for null dereferences and proper usage of `@Nullable` annotations, and that class files in these packages should be assumed to have correct usage of `@Nullable` (see [the docs](https://github.com/uber/NullAway/wiki/Configuration) for more detail).  NullAway requires at least the `AnnotatedPackages` configuration argument to run, in order to distinguish between annotated and unannotated code.  See [the configuration docs](https://github.com/uber/NullAway/wiki/Configuration) for other useful configuration options.
 
 We recommend addressing all the issues that Error Prone reports, particularly those reported as errors (rather than warnings).  But, if you'd like to try out NullAway without running other Error Prone checks, you can use `options.errorprone.disableAllChecks` (equivalent to passing `"-XepDisableAllChecks"` to the compiler, before the NullAway-specific arguments).
 
